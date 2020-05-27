@@ -36,9 +36,13 @@ head
 
 body.home-page
   include layout/header.pug
+
+  <div id="map"></div>
+
   include layout/footer.pug
 
 script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
 script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js')
 script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js')
+script(async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyD3PDE5fwmEnSAK-ZXQRwKAeqEAlgM5Yqc&callback=initMap')
 script(src='./js/homepage.js')
