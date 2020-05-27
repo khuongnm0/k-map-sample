@@ -26,5 +26,13 @@ function initMap() {
       fillColor: color,
       strokeWeight: 1
     };
+  }); // Add listener click event
+
+  map.data.addListener('click', function (event) {
+    var newColor = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
+    console.log('newColor: ', newColor);
+    map.data.overrideStyle(event.feature, {
+      fillColor: newColor
+    }); // override current style with new color
   });
 }
