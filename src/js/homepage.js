@@ -13,7 +13,7 @@ function getGreenToRed(percent) {
 }
 
 // function invoke when callback from google API
-function initMap() {
+function initMapGoogle() {
   const mapGoogle = new google.maps.Map(document.getElementById('mapGoogle'), {
     zoom: 6,
     center: { lat: 53, lng: -2 } // England

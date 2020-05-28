@@ -45,7 +45,7 @@ function getGreenToRed(percent) {
 } // function invoke when callback from google API
 
 
-function initMap() {
+function initMapGoogle() {
   var mapGoogle = new google.maps.Map(document.getElementById('mapGoogle'), {
     zoom: 6,
     center: {
