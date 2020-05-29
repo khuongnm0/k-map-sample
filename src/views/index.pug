@@ -39,12 +39,18 @@ body.home-page
   include layout/header.pug
 
   .container-fluid
+    .toolbox
+      .form-check
+        input.form-check-input(type="checkbox" value="" id="cbLayer" checked disabled)
+        label.form-check-label(for='cbLayer')
+          span Toggler Layer
+        
+
     h2 Google Map
     .map-container#mapGoogle
-
-  .container-fluid
     h2 Leaflet Map
     .map-container#mapLeaflet
+ 
 
 
   include layout/footer.pug

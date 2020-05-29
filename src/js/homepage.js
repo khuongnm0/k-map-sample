@@ -19,6 +19,19 @@ function initMapGoogle() {
     center: { lat: 53, lng: -2 } // England
   });
 
+  var infowindow = new google.maps.InfoWindow({
+    content: `<div>Test marker.<br> Clickable !</div>`
+  });
+
+  const marker = new google.maps.Marker({
+    position: { lat: 51.5, lng: -0.09 },
+    map: mapGoogle,
+    title: 'Test marker.<br> Clickable !'
+  });
+  marker.addListener('click', function () {
+    infowindow.open(mapGoogle, marker);
+  });
+
 
   // Load GeoJSON.
   mapGoogle.data.loadGeoJson(
@@ -66,29 +79,20 @@ function initMapGoogle() {
   });
 
 
+  window.mapGoogle = mapGoogle;
+  setTimeout(() => {
+    $('#cbLayer').attr('disabled', false);
+  }, 3000)
 }
 
 
-function initMapLeaflet() {
-  const mapLeaflet = L.map('mapLeaflet', {
-    center: [53, -2],
-    zoom: 6
-  });
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(mapLeaflet);
-
-  // L.marker([51.5, -0.09]).addTo(mapLeaflet)
-  //   .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-  //   .openPopup();
-
-
-
+function renderLayerToLeafletMap() {
   loadJSON('./assets/json/wpc.json').then(data => {
-    const dataJSON = data;
-    console.log('dataJSON: ', dataJSON);
+    if (!window.dataJSON) {
+      window.dataJSON = data;
+    }
 
+    // Render to Leaflet
     L.geoJSON(dataJSON,
       {
         style: function (feature) {
@@ -99,15 +103,78 @@ function initMapLeaflet() {
             color: '#000', // Stroke color
             weight: 1 // Stroke weight
           };
+        },
+        onEachFeature: function (feature, layer) {
+          layer.myTag = "myGeoJSON"
         }
+
       }
-    ).addTo(mapLeaflet);
+    ).addTo(window.mapLeaflet);
   });
 
+}
 
+function removeLayerOnLeafletMap() {
+  window.mapLeaflet.eachLayer(function (layer) {
+    if (layer.myTag && layer.myTag === "myGeoJSON") {
+      window.mapLeaflet.removeLayer(layer)
+    }
+  });
+}
+
+function initMapLeaflet() {
+  window.mapLeaflet = L.map('mapLeaflet', {
+    center: [53, -2],
+    zoom: 6
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(window.mapLeaflet);
+
+  L.marker([51.5, -0.09]).addTo(window.mapLeaflet)
+    .bindPopup('Test marker.<br> Clickable !')
+  //   .openPopup();
+
+  renderLayerToLeafletMap();
 }
 
 
 
-initMapLeaflet();
+function showData() {
+  loadJSON('./assets/json/data.json').then(data => {
 
+    const Sheet1 = data.Sheet1;
+    Sheet1.forEach(el => {
+      // console.log('LSOA Name: ', el['LSOA Name']);
+
+      // console.log('Index of Multiple Deprivation Decile: ', el['Index of Multiple Deprivation Decile']);
+
+    })
+  });
+}
+
+showData();
+
+
+$(document).ready(() => {
+  // console.log("ready!");
+  initMapLeaflet();
+
+  $('#cbLayer').on('change', function (event) {
+    let _this = $(this);
+    let isChecked = _this.prop('checked');
+    console.log('isChecked: ', isChecked);
+
+    if (isChecked) {
+      window.mapGoogle.data.setMap(window.mapGoogle);
+
+      renderLayerToLeafletMap();
+
+    } else {
+      window.mapGoogle.data.setMap(null);
+
+      removeLayerOnLeafletMap();
+    }
+  })
+});
